@@ -1,15 +1,15 @@
 package com.iqbal.inventoryservice.controller;
 
-import com.iqbal.inventoryservice.model.InventoryResponse;
-import com.iqbal.inventoryservice.model.WebResponse;
+import com.iqbal.inventoryservice.model.request.InventoryRequest;
+import com.iqbal.inventoryservice.model.response.InventoryResponse;
+import com.iqbal.inventoryservice.model.response.WebResponse;
 import com.iqbal.inventoryservice.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,16 +18,29 @@ public class InventoryController {
 
     private final InventoryService service;
 
-    @GetMapping("/{sku-code}")
-    ResponseEntity<WebResponse<InventoryResponse>> isInStock(@PathVariable("sku-code") String skuCode){
-        InventoryResponse inStock = service.isInStock(skuCode);
+    @GetMapping()
+    ResponseEntity<WebResponse<List<InventoryResponse>>> isInStock(@RequestParam() List<String> skuCode){
+        List<InventoryResponse> inStock = service.isInStock(skuCode);
 
-        WebResponse<InventoryResponse> response = WebResponse.<InventoryResponse>builder()
+        WebResponse<List<InventoryResponse>> response = WebResponse.<List<InventoryResponse>>builder()
                 .status(HttpStatus.OK.getReasonPhrase())
                 .message("successfully get data by sku code")
                 .data(inStock)
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping
+    ResponseEntity<WebResponse<InventoryResponse>> create(@RequestBody InventoryRequest request){
+        InventoryResponse inventoryResponse = service.create(request);
+
+        WebResponse<InventoryResponse> response = WebResponse.<InventoryResponse>builder()
+                .status(HttpStatus.CREATED.getReasonPhrase())
+                .message("successfully create inventory")
+                .data(inventoryResponse)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

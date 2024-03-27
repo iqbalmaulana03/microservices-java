@@ -10,4 +10,6 @@ public interface ProductService {
     ProductResponse create(ProductRequest request);
 
     List<ProductResponse> getAll();
+
+    String get(String id);
 }

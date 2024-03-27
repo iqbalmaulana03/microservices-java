@@ -72,4 +72,21 @@ class ProductControllerTest {
         assertEquals("successfully get all product", Objects.requireNonNull(responseBody).getMessage());
         assertEquals(dummyProducts, responseBody.getData());
     }
+
+    @Test
+    void get() {
+
+        String productId = "123";
+
+        when(productService.get(productId)).thenReturn(productId);
+
+        ResponseEntity<WebResponse<String>> responseEntity = productController.get(productId);
+
+        verify(productService, times(1)).get(productId);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        WebResponse<String> responseBody = responseEntity.getBody();
+        assertEquals("successfully get product by id", Objects.requireNonNull(responseBody).getMessage());
+        assertEquals(productId, responseBody.getData());
+    }
 }

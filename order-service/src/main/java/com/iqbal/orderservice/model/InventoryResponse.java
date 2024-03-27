@@ -1,4 +1,4 @@
-package com.iqbal.inventoryservice.model;
+package com.iqbal.orderservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,13 +7,9 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Data
-public class WebResponse <T>{
-
-    private String status;
-
-    private String message;
-
-    private T data;
+@Builder
+public class InventoryResponse {
+    private String skuCode;
+    private boolean isInStock;
 }

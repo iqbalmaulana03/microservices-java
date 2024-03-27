@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -74,5 +75,24 @@ class ProductServiceImplTest {
             assertEquals(dummyProducts.get(i).getId(), result.get(i).getId());
             assertEquals(dummyProducts.get(i).getName(), result.get(i).getName());
         }
+    }
+
+    @Test
+    void get() {
+
+        Product product = Product.builder()
+                .id("123")
+                .name("Iphone 15")
+                .description("iphone 15")
+                .price(BigDecimal.valueOf(2000))
+                .build();
+
+        when(repository.findById(product.getId())).thenReturn(Optional.of(product));
+
+        String productResponse = productService.get(product.getId());
+
+        verify(repository).findById(product.getId());
+
+        assertNotNull(productResponse);
     }
 }

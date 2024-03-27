@@ -43,4 +43,17 @@ public class ProductController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{productId}")
+    ResponseEntity<WebResponse<String>> get(@PathVariable("productId") String id){
+        String productResponse = service.get(id);
+
+        WebResponse<String> response = WebResponse.<String>builder()
+                .message("successfully get product by id")
+                .status(HttpStatus.OK.getReasonPhrase())
+                .data(productResponse)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 }

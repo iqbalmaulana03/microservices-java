@@ -56,6 +56,15 @@ public class ProductServiceImpl implements ProductService {
         return all.stream().map(this::toProductResponse).toList();
     }
 
+    @Override
+    public String get(String id) {
+        Product product = repository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product Not Found")
+        );
+
+        return product.getId();
+    }
+
     private ProductResponse toProductResponse(Product product){
         return ProductResponse.builder()
                 .id(product.getId())

@@ -1,6 +1,6 @@
 package com.iqbal.inventoryservice.exception;
 
-import com.iqbal.inventoryservice.model.WebResponse;
+import com.iqbal.inventoryservice.model.response.WebResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

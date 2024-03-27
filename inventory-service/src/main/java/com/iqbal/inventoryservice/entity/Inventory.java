@@ -22,4 +22,7 @@ public class Inventory {
     private String skuCode;
 
     private Integer quantity;
+
+    @Column(name = "product_id")
+    private String productId;
 }

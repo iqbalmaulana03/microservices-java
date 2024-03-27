@@ -1,50 +1,68 @@
 package com.iqbal.inventoryservice.controller;
 
-import com.iqbal.inventoryservice.model.InventoryResponse;
-import com.iqbal.inventoryservice.model.WebResponse;
+import com.iqbal.inventoryservice.model.request.InventoryRequest;
+import com.iqbal.inventoryservice.model.response.InventoryResponse;
 import com.iqbal.inventoryservice.service.impl.InventoryServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Objects;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Arrays;
+import java.util.List;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(InventoryController.class)
 class InventoryControllerTest {
 
-    @InjectMocks
-    private InventoryController controller;
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private InventoryServiceImpl inventoryService;
 
     @Test
-    void isInStock() {
+    void isInStock() throws Exception {
 
-        String skuCode = "Iphone 15";
+        String responseJson = "{\"status\":\"OK\",\"message\":\"successfully get data by sku code\",\"data\":[{\"skuCode\":\"SKU001\",\"inStock\":true},{\"skuCode\":\"SKU002\",\"inStock\":false},{\"skuCode\":\"SKU003\",\"inStock\":true}]}";
 
-        InventoryResponse expectedResponse = InventoryResponse.builder()
-                .id(1L)
-                .skuCode(skuCode)
-                .quantity(1)
-                .build();
+        List<InventoryResponse> dummyInventories = Arrays.asList(
+                new InventoryResponse("SKU001", true),
+                new InventoryResponse("SKU002", false),
+                new InventoryResponse("SKU003", true)
+        );
 
-        when(inventoryService.isInStock(skuCode)).thenReturn(expectedResponse);
+        when(inventoryService.isInStock(anyList())).thenReturn(dummyInventories);
 
-        ResponseEntity<WebResponse<InventoryResponse>> responseEntity = controller.isInStock(skuCode);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/inventory")
+                        .param("skuCode", "SKU001", "SKU002", "SKU003"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(responseJson));
+    }
 
-        verify(inventoryService, times(1)).isInStock(skuCode);
+    @Test
+    void create() throws Exception {
+        InventoryRequest request = new InventoryRequest("product001", "SKU001", 10);
+        InventoryResponse inventoryResponse = new InventoryResponse("SKU001", true);
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        WebResponse<InventoryResponse> responseBody = responseEntity.getBody();
-        assertEquals("successfully get data by sku code", Objects.requireNonNull(responseBody).getMessage());
-        assertEquals(expectedResponse, responseBody.getData());
+        when(inventoryService.create(any(InventoryRequest.class))).thenReturn(inventoryResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/inventory")
+                        .contentType("application/json")
+                        .content("{ \"productId\": \"product001\", \"skuCode\": \"SKU001\", \"quantity\": 10 }"))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("successfully create inventory"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.skuCode").value("SKU001"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.inStock").value(true));
+
+        verify(inventoryService, times(1)).create(request);
     }
 }

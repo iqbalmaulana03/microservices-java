@@ -75,4 +75,20 @@ class ProductRepositoryTest {
 
         Assertions.assertThat(getName).isNotNull();
     }
+
+    @Test
+    void findById() {
+
+        Product product = Product.builder()
+                .name("Iphone 14")
+                .description("iphone 14")
+                .price(BigDecimal.valueOf(1000))
+                .build();
+
+        repository.save(product);
+
+        Product getId = repository.findById(product.getId()).orElseThrow();
+
+        Assertions.assertThat(getId).isNotNull();
+    }
 }
