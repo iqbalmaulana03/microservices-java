@@ -28,11 +28,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional(readOnly = true)
     public List<InventoryResponse> isInStock(List<String> skuCode) {
-        List<Inventory> inventories = repository.findBySkuCodeIn(skuCode);
-
-        if (inventories.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Inventory Not Found");
-
-        return inventories.stream()
+        return repository.findBySkuCodeIn(skuCode).stream()
                 .map(inventory ->
                         InventoryResponse.builder()
                                 .skuCode(inventory.getSkuCode())
@@ -48,10 +44,12 @@ public class InventoryServiceImpl implements InventoryService {
         utils.validate(request);
 
         String product = webClient.get()
-                .uri("http://localhost:8080/api/products" + request.getProductId())
+                .uri("http://localhost:8080/api/products/" + request.getProductId())
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+
+        if (product == null || product.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
 
         Inventory inventory = Inventory.builder()
                 .skuCode(request.getSkuCode())

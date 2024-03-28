@@ -18,17 +18,10 @@ public class InventoryController {
 
     private final InventoryService service;
 
-    @GetMapping()
-    ResponseEntity<WebResponse<List<InventoryResponse>>> isInStock(@RequestParam() List<String> skuCode){
-        List<InventoryResponse> inStock = service.isInStock(skuCode);
-
-        WebResponse<List<InventoryResponse>> response = WebResponse.<List<InventoryResponse>>builder()
-                .status(HttpStatus.OK.getReasonPhrase())
-                .message("successfully get data by sku code")
-                .data(inStock)
-                .build();
-
-        return ResponseEntity.ok(response);
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<InventoryResponse> isInStock(@RequestParam List<String> skuCode) {
+        return service.isInStock(skuCode);
     }
 
     @PostMapping

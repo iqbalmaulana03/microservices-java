@@ -1,4 +1,4 @@
-package com.iqbal.orderservice.model;
+package com.iqbal.orderservice.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
