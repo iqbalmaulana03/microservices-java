@@ -43,8 +43,6 @@ einventory-service/src/test/java/com/iqbal/inventoryservice/service/impl/Invento
 Pinventory-service/src/main/java/com/iqbal/inventoryservice/entity/Inventory.java,8\6\868b3bfc2523e68fffffb8c73884927963c7eac4
 z
 Jproduct-service/src/main/java/com/iqbal/productservice/entity/Product.java,c\3\c33b14261176245daa777e12c95754f039cef60a
-
-Oorder-service/src/main/java/com/iqbal/orderservice/model/InventoryResponse.java,5\5\5511e32ec07b007456cfed495358fcb97322d7a7
 â
 Yinventory-service/src/main/java/com/iqbal/inventoryservice/exception/ErrorController.java,6\c\6c25e2a5e7934ec5c72a626c4b802b0f13044866
 Ö
@@ -183,3 +181,7 @@ w
 G.idea/sonarlint/issuestore/c/3/c33b14261176245daa777e12c95754f039cef60a,7\8\78631ca6823fa459e9c62eeb0a439a51100152b2
 Å
 Q.idea/sonarlint/securityhotspotstore/8/6/868b3bfc2523e68fffffb8c73884927963c7eac4,3\3\33e6eba8cd82723c297d532f3d25755b40f9119f
+C
+api-gateway/pom.xml,2\b\2bfa2b108f2439e99e004f4085b58c22cf995f73
+y
+Iapi-gateway/src/main/java/com/iqbal/apigateway/ApiGateWayApplication.java,6\3\63fe015b008403219083a363dd566468f46f397e
