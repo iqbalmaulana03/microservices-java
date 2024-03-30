@@ -173,10 +173,6 @@ w
 G.idea/sonarlint/issuestore/8/6/868b3bfc2523e68fffffb8c73884927963c7eac4,1\9\19eef660b73933bf3fec5be4d842296f3b778d23
 w
 G.idea/sonarlint/issuestore/a/4/a4c1a16fb29f348da48645297f102dd2efeeea9b,5\0\501e2656cc828545117a90adb2e17b9c0cefc943
-Å
-Q.idea/sonarlint/securityhotspotstore/5/5/5511e32ec07b007456cfed495358fcb97322d7a7,4\c\4c723e49cfc9ae0d80a43d0926dbaf96c53aa690
-w
-G.idea/sonarlint/issuestore/5/5/5511e32ec07b007456cfed495358fcb97322d7a7,f\1\f194059f5ea3d83a65f34c70151b14666da50b87
 w
 G.idea/sonarlint/issuestore/c/3/c33b14261176245daa777e12c95754f039cef60a,7\8\78631ca6823fa459e9c62eeb0a439a51100152b2
 Å
@@ -185,3 +181,9 @@ C
 api-gateway/pom.xml,2\b\2bfa2b108f2439e99e004f4085b58c22cf995f73
 y
 Iapi-gateway/src/main/java/com/iqbal/apigateway/ApiGateWayApplication.java,6\3\63fe015b008403219083a363dd566468f46f397e
+y
+Iapi-gateway/src/main/java/com/iqbal/apigateway/config/SecurityConfig.java,9\f\9ff47ed8f01314015aad0b0173dfad5a3ba76a87
+É
+Sdiscovery-server/src/main/java/com.iqbal.discoveryserver/config/SecurityConfig.java,e\0\e0e198711e03d0b3ed6c1702bf148e5a8f194af6
+|
+Ldiscovery-server/src/main/java/com.iqbal.discoveryserver/SecurityConfig.java,7\0\705aae43e876187256f6096ff36ebb9f840784c8
