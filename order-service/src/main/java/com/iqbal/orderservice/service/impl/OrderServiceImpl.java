@@ -8,6 +8,8 @@ import com.iqbal.orderservice.model.request.OrderRequest;
 import com.iqbal.orderservice.repository.OrderRepository;
 import com.iqbal.orderservice.service.OrderService;
 import com.iqbal.orderservice.utils.ValidationUtils;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,9 +33,11 @@ public class OrderServiceImpl implements OrderService {
 
     private final WebClient.Builder webClient;
 
+    private final ObservationRegistry observationRegistry;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void placeOrder(OrderRequest request) {
+    public String placeOrder(OrderRequest request) {
 
         utils.validate(request);
 
@@ -49,23 +53,30 @@ public class OrderServiceImpl implements OrderService {
 
         List<String> skuCodes = order.getOrderLineItemsList().stream().map(OrderLineItems::getSkuCode).toList();
 
-        InventoryResponse[] inventoryResponses = webClient.build().get()
-                .uri("http://inventory-service/api/inventory",
-                        uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
-                .retrieve()
-                .bodyToMono(InventoryResponse[].class)
-                .block();
+        Observation inventoryServiceObservation = Observation.createNotStarted("inventory-service-lookup",
+                this.observationRegistry);
 
-        assert inventoryResponses != null;
+        inventoryServiceObservation.lowCardinalityKeyValue("call", "inventory-service");
 
-        boolean result = Arrays.stream(inventoryResponses).allMatch(InventoryResponse::isInStock);
+        return inventoryServiceObservation.observe(() -> {
+            InventoryResponse[] inventoryResponses = webClient.build().get()
+                    .uri("http://inventory-service/api/inventory",
+                            uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
+                    .retrieve()
+                    .bodyToMono(InventoryResponse[].class)
+                    .block();
 
-        if (result){
-            repository.save(order);
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product is not in stock, please try again latter");
-        }
+            assert inventoryResponses != null;
 
+            boolean result = Arrays.stream(inventoryResponses).allMatch(InventoryResponse::isInStock);
+
+            if (result) {
+                repository.save(order);
+                return "Order Placed";
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product is not in stock, please try again latter");
+            }
+        });
     }
 
     private OrderLineItems mapToDto(OrderLineItemsDto request){

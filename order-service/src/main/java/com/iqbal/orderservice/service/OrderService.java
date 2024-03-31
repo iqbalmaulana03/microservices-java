@@ -4,5 +4,5 @@ import com.iqbal.orderservice.model.request.OrderRequest;
 
 public interface OrderService {
 
-    void placeOrder(OrderRequest request);
+    String placeOrder(OrderRequest request);
 }
