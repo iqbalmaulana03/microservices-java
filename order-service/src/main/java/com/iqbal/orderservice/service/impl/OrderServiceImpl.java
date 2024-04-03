@@ -2,6 +2,7 @@ package com.iqbal.orderservice.service.impl;
 
 import com.iqbal.orderservice.entity.Order;
 import com.iqbal.orderservice.entity.OrderLineItems;
+import com.iqbal.orderservice.event.OrderPlacedEvent;
 import com.iqbal.orderservice.model.response.InventoryResponse;
 import com.iqbal.orderservice.model.request.OrderLineItemsDto;
 import com.iqbal.orderservice.model.request.OrderRequest;
@@ -13,6 +14,7 @@ import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -34,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
     private final WebClient.Builder webClient;
 
     private final ObservationRegistry observationRegistry;
+
+    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -72,6 +76,7 @@ public class OrderServiceImpl implements OrderService {
 
             if (result) {
                 repository.save(order);
+                kafkaTemplate.send("notificationTopic", new OrderPlacedEvent(order.getOrderNumber()));
                 return "Order Placed";
             } else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product is not in stock, please try again latter");
